@@ -3,6 +3,7 @@
 const rollBtn = document.querySelector('.btn--roll');
 const dice = document.querySelector('.dice');
 const holdBtn = document.querySelector('.btn--hold');
+const resetBtn = document.querySelector('.btn--new');
 
 // dice.attributes.src.nodeValue  <- Src value
 const player1 = {
@@ -13,6 +14,7 @@ const player1 = {
   domCurrScore: document.querySelector('#current--0'),
   classSection: document.querySelector('.player--0'),
   isPlaying: 1,
+  hasWon: 0,
 };
 
 const player2 = {
@@ -23,9 +25,11 @@ const player2 = {
   domCurrScore: document.querySelector('#current--1'),
   classSection: document.querySelector('.player--1'),
   isPlaying: 0,
+  hasWon: 0,
 };
 
 rollBtn.addEventListener('click', function () {
+  console.log('clicked');
   const randNum = Math.floor(Math.random() * 6) + 1;
   console.log(randNum);
   dice.attributes.src.nodeValue = `./images/dice-${randNum}.png`;
@@ -60,6 +64,8 @@ holdBtn.addEventListener('click', function () {
   } else if (player2.isPlaying === 1) {
     totalPlayerScore(player2, player1);
   }
+
+  winnerPlayer(player1, player2);
 });
 
 function totalPlayerScore(player, secondaryPlayer) {
@@ -76,18 +82,48 @@ function totalPlayerScore(player, secondaryPlayer) {
   secondaryPlayer.classSection.classList.toggle('player--active');
 }
 
-let test = prompt('Numero');
-player2.totalScore = test;
-player2.domTotalScore.textContent = test;
-
 function winnerPlayer(player, secondaryPlayer) {
   if (player.totalScore >= 100) {
     player.classSection.classList.toggle('player--winner');
+    holdBtn.disabled = true;
+    rollBtn.disabled = true;
+    player.hasWon = 1;
   } else if (secondaryPlayer.totalScore >= 100) {
     secondaryPlayer.classSection.classList.toggle('player--winner');
+    holdBtn.disabled = true;
+    rollBtn.disabled = true;
+    secondaryPlayer.hasWon = 1;
   }
-  holdBtn.disabled = true;
-  rollBtn.disabled = true;
 }
 
-winnerPlayer(player1, player2);
+function resetScores(player) {
+  player.totalScore = 0;
+  player.domTotalScore.textContent = 0;
+  player.currentScore = 0;
+  player.domCurrScore.textContent = 0;
+}
+
+resetBtn.addEventListener('click', function () {
+  console.log('Reset');
+  resetScores(player1);
+  resetScores(player2);
+  holdBtn.disabled = false;
+  rollBtn.disabled = false;
+
+  if (player1.isPlaying === 1) {
+    player2.isPlaying = 0;
+  } else if (player2.isPlaying === 1) {
+    player1.isPlaying = 1;
+    player2.isPlaying = 0;
+    player1.classSection.classList.toggle('player--active');
+    player2.classSection.classList.toggle('player--active');
+  }
+
+  if (player1.hasWon === 1) {
+    player1.classSection.classList.toggle('player--winner');
+    player1.hasWon = 0;
+  } else if (player2.hasWon === 1) {
+    player2.classSection.classList.toggle('player--winner');
+    player2.hasWon = 0;
+  }
+});
