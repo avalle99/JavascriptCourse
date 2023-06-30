@@ -25,8 +25,7 @@ const printGoals = function (...players) {
   console.log(`${players.length} goals were scored`);
 };
 
-// printGoals('Davies', 'Muller', 'Lewandowski', 'Kimmich');
-// printGoals('Davies', 'Muller');
+
 printGoals(...game.scored);
 
 // 7.
